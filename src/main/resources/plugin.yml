@@ -1,0 +1,4 @@
+name: Multibreak
+version: '${version}'
+main: me.itzsunboi.multibreak.Multibreak
+api-version: 1.20
