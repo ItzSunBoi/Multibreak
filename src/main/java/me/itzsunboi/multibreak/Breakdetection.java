@@ -1,22 +1,14 @@
 package me.itzsunboi.multibreak;
 
-import de.tr7zw.changeme.nbtapi.NBTItem;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.Arrays;
-
-import static org.bukkit.Bukkit.getServer;
 
 public class Breakdetection implements Listener {
 
@@ -24,17 +16,44 @@ public class Breakdetection implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer(); // Get the player who broke the block
         ItemStack itemInHand = player.getInventory().getItemInMainHand(); // Get the item used to break the block
+        Material helditem = player.getInventory().getItemInMainHand().getType();
 
         if (itemInHand != null) {
-            if (itemInHand.getType() == Material.DIAMOND_PICKAXE) {
+            if (helditem == Material.DIAMOND_PICKAXE && haslore(itemInHand, Material.DIAMOND_PICKAXE)) {
                 Block centerBlock = event.getBlock();
                 int breakradius = 2;
                 int blocksbroken = breakBlocksInRadius(centerBlock, breakradius);
                 decreaseItemDurability(player, blocksbroken);
 
+            } else if (helditem == Material.NETHERITE_PICKAXE && haslore(itemInHand, Material.NETHERITE_PICKAXE)) {
+                Block centerBlock = event.getBlock();
+                int breakradius = 3;
+                int blocksbroken = breakBlocksInRadius(centerBlock, breakradius);
+                decreaseItemDurability(player, blocksbroken);
+
+            } else if (helditem == Material.IRON_PICKAXE && haslore(itemInHand, Material.IRON_PICKAXE)) {
+                Block centerBlock = event.getBlock();
+                int breakradius = 1;
+                int blocksbroken = breakBlocksInRadius(centerBlock, breakradius);
+                decreaseItemDurability(player, blocksbroken);
+
             }
+
         }
 
+    }
+
+    private boolean haslore(ItemStack item, Material type) {
+        if (item != null && item.getType() == type && item.hasItemMeta()) {
+            // Check for specific chest characteristics (customize as needed)
+            // Example: Check for a custom tag or lore
+            if (item.getItemMeta().hasLore()){
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 
     private void decreaseItemDurability(Player player, int blocksBroken) {
